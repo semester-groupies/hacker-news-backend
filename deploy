@@ -3,6 +3,7 @@ ssh root@favl.dk <<EOF
 cd ~/hacker-news-backend/
 git pull
 npm install --production
+docker build -t favl/hacker-news-clone .
 docker restart hacker-news-backend
 exit
 EOF
