@@ -4,6 +4,9 @@ cd ~/hacker-news-backend/
 git pull
 npm install --production
 docker build -t favl/hacker-news-clone .
-docker restart hacker-news-backend
+docker pull favl/hacker-news-clone:latest
+docker stop hacker-news-backend
+docker rm hacker-news-backend
+docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest
 exit
 EOF
