@@ -1,8 +1,8 @@
--#!/bin/sh      
-ssh root@favl.dk <<EOF        
- cd /hacker-news-backend  
- git pull       
- npm install --production       
- docker restart hacker-news-backend
- exit       
+-#!/bin/sh
+ssh root@favl.dk <<EOF
+cd ~/hacker-news-backend/
+git pull
+npm install --production
+docker restart hacker-news-backend
+exit
 EOF
