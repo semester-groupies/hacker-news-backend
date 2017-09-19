@@ -9,7 +9,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/', (req, res) => {
-  res.send('Hello World from a Restarted app built from a Docker image!\n');
+  res.send('Hello World from a Restarted app built from a Docker image! With a whole team but Richie is still the Bum\n');
 });
 
 app.listen(PORT, HOST);
