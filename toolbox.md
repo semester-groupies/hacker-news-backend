@@ -12,3 +12,5 @@
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/12.png "img")
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/13.png "img")
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/14.png "img")
+
+### All tasks of this assignment were evenly split up between the group members. 20 % of work for each group member.
