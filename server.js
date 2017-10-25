@@ -1,44 +1,52 @@
 'use strict';
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'localhost';
-
+/**
+ * Module dependencies.
+ */
 const express = require('express');
+const errorHandler = require('errorhandler');
 const logger = require('morgan');
+
+
+/**
+ * Controllers (route handlers).
+ */
+ const index = require('./routes/index');
 const users = require('./routes/users');
 
-// App
+/**
+ * Create Express server.
+ */
 const app = express();
 
-app.use(logger('combined')); // can be chnged to 'dev' for more simple logging
-
+app.use('/', index);
 app.use('/user', users);
-
+/*
 app.get('/', (req, res) => {
   res.send('Hello World from a Docker image and Richy!');
-});
+});*/
 
-const port = process.env.LISTEN_PORT || process.env.PORT || 3030;
-const server = app.listen(port, () => {
-  const env = process.env.NODE_ENV;
+/**
+ * Express configuration.
+ */
+app.set('host', process.env.NODE_ENV || 'localhost');
+//todo set digital ocean port in configuration
+app.set('port', process.env.PORT || process.env.DIGITAL_OCEAN_PORT || 8080);
+app.use(logger('dev'));
+
+/**
+ * Error Handler.
+ */
+app.use(errorHandler());
+
+/**
+ * Start Express server.
+ */
+app.listen(app.get('port'), () => {
   console.log(
-    `Hacker-news api is running at http://localhost:${port} with ${env} configuration`
+    `Hacker-news api is running at http://localhost:${app.get('port')} with ${app.get('host')} configuration`
   );
 });
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+module.exports = app;
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
