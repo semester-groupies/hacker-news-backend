@@ -67,3 +67,7 @@ To create the build jobs:
     This will tell Jenkins to look to our deploy script for instructions regarding the deployment (only upon successful build ofcourse).
   7. Add a Build Environment variable to use for logging in to docker during the script execution.
   8. Hit the "apply" and "save", and your build job is ready.
+
+---
+To run project with nodemon:
+  in your terminal type "npm run devstart"
