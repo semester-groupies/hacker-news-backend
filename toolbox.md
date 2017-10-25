@@ -11,3 +11,4 @@
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/11.png "img")
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/12.png "img")
 ![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/13.png "img")
+![alt text](https://github.com/semester-groupies/hacker-news-backend/blob/master/images/14.png "img")
