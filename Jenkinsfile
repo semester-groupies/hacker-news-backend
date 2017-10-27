@@ -141,7 +141,7 @@ def dockerDeploy () {
 }
 
 def production() {
-    sh 'ssh -tt root@favl.dk'
+    sh 'ssh -t root@favl.dk'
     sh 'docker ps -a'
     sh 'docker stop "hacker-news-backend"'
     sh 'docker rm hacker-news-backend'
