@@ -141,14 +141,16 @@ def dockerDeploy () {
 }
 
 def production() {
-    sshagent(['60a6dcd3-151d-4039-a5af-afd36219448d']) {
-        sh 'ssh -t root@favl.dk'
-        sh 'docker ps -a'
-        sh 'docker stop "hacker-news-backend"'
-        sh 'docker rm hacker-news-backend'
-        sh 'docker pull favl/hacker-news-clone:latest'
-        sh 'docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest'
-        sh 'exit'
+    stage('Deploy') {
+        sshagent(['60a6dcd3-151d-4039-a5af-afd36219448d']) {
+            sh 'ssh root@favl.dk'
+            sh 'docker ps -a'
+            sh 'docker stop "hacker-news-backend"'
+            sh 'docker rm hacker-news-backend'
+            sh 'docker pull favl/hacker-news-clone:latest'
+            sh 'docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest'
+            sh 'exit'
+        }
     }
 }
 
