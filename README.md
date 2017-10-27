@@ -71,3 +71,6 @@ To create the build jobs:
 ---
 To run project with nodemon:
   in your terminal type "npm run devstart"
+
+---
+Neo4J Database resides at: http://favl.dk:8474/
