@@ -141,14 +141,13 @@ def dockerDeploy () {
 }
 
 def production() {
-    sh 'ssh -tt root@favl.dk <<EOF'
+    sh 'ssh -tt root@favl.dk'
     sh 'docker ps -a'
     sh 'docker stop "hacker-news-backend"'
     sh 'docker rm hacker-news-backend'
     sh 'docker pull favl/hacker-news-clone:latest'
     sh 'docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest'
     sh 'exit'
-    sh 'EOF'
 }
 
 def clean_up () {
