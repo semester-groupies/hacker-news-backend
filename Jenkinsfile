@@ -143,11 +143,11 @@ def dockerDeploy () {
 def production() {
     stage('Deploy') {
         sh '''ssh root@favl.dk <<EOF
-        docker ps -a'
-        docker stop "hacker-news-backend"'
-        docker rm hacker-news-backend'
-        docker pull favl/hacker-news-clone:latest'
-        docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest'
+        docker ps -a
+        docker stop hacker-news-backend
+        docker rm hacker-news-backend
+        docker pull favl/hacker-news-clone:latest
+        docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest
         exit
         EOF'''
     }
