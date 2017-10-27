@@ -142,6 +142,7 @@ def dockerDeploy () {
 
 def production() {
     sh 'ssh root@favl.dk <<EOF'
+    sh 'docker ps -a'
     sh 'docker stop "hacker-news-backend"'
     sh 'docker rm hacker-news-backend'
     sh 'docker pull favl/hacker-news-clone:latest'
