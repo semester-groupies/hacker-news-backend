@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-
+const storyTypes = require("./../enums/postType");
 
 router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
 
 
+
 router.post('/', (req, res, next) => {
     var item = req.body;
-    console.log(item.qweqweqweqw)
-    console.log(req.body);
-    var errors = "";
     if (item) {
         console.log(item.hasOwnProperty('username'));
         if (!item.hasOwnProperty('username'))
@@ -30,14 +28,22 @@ router.post('/', (req, res, next) => {
             errors = errors + " , hanesst_id is missing";
         if (!item.hasOwnProperty('post_text'))
             errors = errors + " , post_text is missing";
-        console.log(errors);
-        console.log("........");
         //start
         if (errors !== "") {
             var msg = new Error();
             msg.status = 400;
             msg.message = "malformed body " + errors;
             res.send(msg);
+        }else{
+            if(item.post_type == storyTypes.story){
+
+            }else if (item.post_type == storyTypes.comment){
+
+            }else if (item.post_type == storyTypes.poll){
+
+            }else if (item.post_type == storyTypes.pollopt){
+
+            }
         }
     } else {
         var msg = new Error();

@@ -1,0 +1,1 @@
+module.exports = postEnum = {story: "story", comment: "comment", poll: "poll", pollopt: "pollopt"};
