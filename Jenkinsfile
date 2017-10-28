@@ -129,7 +129,7 @@ def deploy() {
         docker stop hacker-news-backend
         docker rm hacker-news-backend
         docker pull favl/hacker-news-clone:latest
-        docker run --name hacker-news-backend -d -p 8080:8080 favl/hacker-news-clone:latest
+        docker run --name hacker-news-backend -d -p 8080:8090 favl/hacker-news-clone:latest
         exit
         EOF'''
     }

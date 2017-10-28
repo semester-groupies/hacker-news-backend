@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
  */
 app.set('host', process.env.NODE_ENV || 'localhost');
 //todo set digital ocean port in configuration
-app.set('port', 8080);
+app.set('port', 8090);
 app.use(logger('dev'));
 
 /**

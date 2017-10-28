@@ -2,12 +2,7 @@ var app = require("./../server");
 var request = require("supertest")(app);
 var should = require("should");
 
-// This agent refers to PORT where the program is running.
-
-// var server = supertest.agent("http://localhost:8080");
-
 // UNIT test begin
-
 describe("SAMPLE unit test",function(){
 
   // #1 should return home page

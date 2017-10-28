@@ -15,6 +15,6 @@ RUN npm install
 COPY . .
 
 # Your app binds to port 8080 so you'll use the EXPOSE instruction to have it mapped by the docker daemon:
-EXPOSE 8080
+EXPOSE 8090
 
 CMD [ "npm", "start" ]
