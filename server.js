@@ -7,7 +7,7 @@ const express = require('express');
 const errorHandler = require('errorhandler');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-
+var cors = require('cors');
 /**
  * Controllers (route handlers).
  */
@@ -19,6 +19,7 @@ const users = require('./routes/users');
  * Create Express server.
  */
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
