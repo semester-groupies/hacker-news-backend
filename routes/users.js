@@ -5,12 +5,12 @@ router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
 var neo4j = require('neo4j-driver').v1;
-const driver = neo4j.driver("bolt://favl.dk:7687", neo4j.auth.basic("neo4j", "hackernes"));
 
-var session = driver.session();
-var salt = bcrypt.genSaltSync(10);
+const driver = neo4j.driver("bolt://favl.dk:7687", neo4j.auth.basic("neo4j", "hackernes"));
+let salt = bcrypt.genSaltSync(10);
 
 router.post('/create', (req, res, next) => {
+    let session = driver.session();
     const user = req.body;
     var errors = "";
     if (user) {
@@ -55,6 +55,7 @@ router.post('/create', (req, res, next) => {
 
 
 router.post('/login', (req, res, next) => {
+    let session = driver.session();
     const user = req.body;
     var errors = "";
     if (user) {
