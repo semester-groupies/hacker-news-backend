@@ -30,18 +30,13 @@ router.post('/create', (req, res, next) => {
                 password: bcrypt.hashSync(user.password, salt)
             };
             session.run("CREATE (n:USER {userin} )", {userin: userToCreate})
-                .subscribe({
-                    onNext: function (record) {
-                    },
-                    onCompleted: function () {
-                        session.close();
-                        res.status(200).send(userToCreate);
-                    },
-                    onError: function (error) {
-                        console.log(error);
-                        res.send(error);
-                    }
-                });
+                .then(function (result) {
+                    session.close();
+                    res.status(200).send(userToCreate);
+                }).catch(function (error) {
+                console.log(error);
+                res.send(error);
+            });
 
         }
     }
@@ -77,25 +72,17 @@ router.post('/login', (req, res, next) => {
             session.run("Match (n:USER)" +
                 "where n.username = {username} " +
                 "  return n", {username: userToCreate.username})
-                .subscribe({
-                    onNext: function (record) {
-                        console.log(record);
-                        if(bcrypt.compareSync(user.password,record._fields[0].properties.password)){
-                            res.status(200).send(record._fields[0]);
-                        }else{
-                            res.status(401).send("Wrong Username or Password")
-                        }
-                    },
-                    onCompleted: function () {
-                        session.close();
-                        res.status(200).send(userToCreate);
-                    },
-                    onError: function (error) {
-                        // console.log(error);
-                        res.send(error);
+                .then(function (record) {
+                    console.log(record);
+                    if (bcrypt.compareSync(user.password, record._fields[0].properties.password)) {
+                        res.status(200).send(record._fields[0]);
+                    } else {
+                        res.status(401).send("Wrong Username or Password")
                     }
-                });
-
+                }).catch(function (error) {
+                // console.log(error);
+                res.send(error);
+            });
         }
     }
     else {
