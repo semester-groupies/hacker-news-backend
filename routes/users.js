@@ -1,16 +1,19 @@
+const handler = require("../handlers/taste");
+
 const express = require('express');
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
 var neo4j = require('neo4j-driver').v1;
+var serverBolt = process.env.NEO4J_DEV || "bolt://45.32.234.181:7687";
+const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
+let salt = handler.salt;
+let session = driver.session();
 
-const driver = neo4j.driver("bolt://45.32.234.181:7687", neo4j.auth.basic("neo4j", "hackernes"));
-let salt = bcrypt.genSaltSync(10);
-
-router.post('/create', (req, res, next) => {
-    let session = driver.session();
+router.post('/register', (req, res, next) => {
     const user = req.body;
     var errors = "";
     if (user) {
@@ -32,7 +35,7 @@ router.post('/create', (req, res, next) => {
             session.run("CREATE (n:USER {userin} )", {userin: userToCreate})
                 .then(function (result) {
                     session.close();
-                    res.status(200).send(userToCreate);
+                    res.status(200).send(jwt.sign(user,handler.secret));
                 }).catch(function (error) {
                 console.log(error);
                 res.send(error);
@@ -50,7 +53,6 @@ router.post('/create', (req, res, next) => {
 
 
 router.post('/login', (req, res, next) => {
-    let session = driver.session();
     const user = req.body;
     var errors = "";
     if (user) {

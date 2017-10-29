@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const storyTypes = require("./../enums/postType");
-
+const handler = require("./../handlers/postHandlers");
 router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
 
 
-
 router.post('/', (req, res, next) => {
     var item = req.body;
+    var errors = "";
     if (item) {
         console.log(item.hasOwnProperty('username'));
         if (!item.hasOwnProperty('username'))
@@ -34,15 +34,15 @@ router.post('/', (req, res, next) => {
             msg.status = 400;
             msg.message = "malformed body " + errors;
             res.send(msg);
-        }else{
-            if(item.post_type == storyTypes.story){
-
-            }else if (item.post_type == storyTypes.comment){
-
-            }else if (item.post_type == storyTypes.poll){
-
-            }else if (item.post_type == storyTypes.pollopt){
-
+        } else {
+            if (item.post_type == storyTypes.story) {
+                handler.postStory(req, res);
+            } else if (item.post_type == storyTypes.comment) {
+                handler.postComment(req, res);
+            } else if (item.post_type == storyTypes.poll) {
+                handler.postPoll(req, res);
+            } else if (item.post_type == storyTypes.pollopt) {
+                handler.postPollopt(req, res);
             }
         }
     } else {
