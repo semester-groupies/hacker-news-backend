@@ -6,7 +6,7 @@ router.get('/', (req, res, next) => {
 });
 var neo4j = require('neo4j-driver').v1;
 
-const driver = neo4j.driver("bolt://favl.dk:7687", neo4j.auth.basic("neo4j", "hackernes"));
+const driver = neo4j.driver("bolt://45.32.234.181:7687", neo4j.auth.basic("neo4j", "hackernes"));
 let salt = bcrypt.genSaltSync(10);
 
 router.post('/create', (req, res, next) => {
