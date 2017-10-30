@@ -23,7 +23,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
-app.use('/users', users);
+app.use('/user', users);
 app.use('/post', story);
 /*
 app.get('/', (req, res) => {
