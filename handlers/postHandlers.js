@@ -40,6 +40,7 @@ function postStory(req, res) {
                     name: item.username,
                     s: {
                         post_title: item.post_title,
+                        post_type: item.post_type,
                         post_text: item.post_text,
                         post_url: item.post_url,
                         post_parent: item.post_parent,
