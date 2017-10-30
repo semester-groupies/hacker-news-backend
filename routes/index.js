@@ -20,19 +20,13 @@ router.get('/latest', (req, res, next) => {
 });
 
 router.get('/stories', (req, res, next) => {
-    session.run("match (b:STORY), p= (b)<-[:COMMENT_ON *0..]-(c) return  b, relationships(p)")
+    session.run("match (b:STORY), p= (b)<-[:COMMENT_ON *0..]-(c) with collect(p) as items CALL apoc.convert.toTree(items) yield value return value")
         .then(result => {
-            console.log(result)
-            var stories = [];
-            var comments = [];
-            result.records.forEach(item => {
-                if (item._fields[0].labels[0] === "STORY") {
-                    stories.push()
-                } else {
-
-                }
-            });
-            res.send(JSON.stringify(result));
+            console.log(result.records);
+            var stories = result.records.map(item => {
+                return item._fields
+            })
+            res.send(JSON.stringify(stories,null,2));
         });
 
 });
