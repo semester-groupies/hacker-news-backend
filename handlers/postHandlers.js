@@ -5,6 +5,7 @@ var serverBolt = process.env.NEO4J_DEV || "bolt://45.32.234.181:7687";
 const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
 let session = driver.session();
 var salt = require("./taste").salt;
+var date_Now = new Date();
 
 function getUser(username, password) {
     return new Promise((resolve, reject) => {
@@ -39,16 +40,19 @@ function postStory(req, res) {
                 {//(p)<-[:PARENT]-
                     name: item.username,
                     s: {
+                        author: item.username,
                         post_title: item.post_title,
                         post_type: item.post_type,
                         post_text: item.post_text,
                         post_url: item.post_url,
                         post_parent: item.post_parent,
-                        hanesst_id: item.hanesst_id
+                        hanesst_id: item.hanesst_id,
+                        created_at: date_Now.toISOString(),
+                        score: 0
                     }
                 }).then(answer => {
                 console.log(answer);
-                res.status(200).send("post created");
+                res.status(200).send('post created');
             }).catch(error => {
                 console.log(error)
                 res.status(400).send("not created");
