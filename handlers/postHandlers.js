@@ -62,8 +62,35 @@ function postStory(req, res) {
 
 
 function postComment(req, res) {
-    res.send("comment");
+    var item = req.body;
+    getUser(item.username, item.pwd_hash).then(isUser => {
+        console.log(isUser);
+        if (isUser) {
+            session.run(`Match (n)
+                        where n.hanesst_id = {parent} 
+                        create (:COMMENT {s})-[:COMMENT_ON]->(n)`,
+                {//(p)<-[:PARENT]-
+                    parent: item.post_parent,
+                    s: {
+                        post_title: item.post_title,
+                        post_type: item.post_type,
+                        post_text: item.post_text,
+                        post_url: item.post_url,
+                        post_parent: item.post_parent,
+                        hanesst_id: item.hanesst_id
+                    }
+                }).then(answer => {
+                console.log(answer);
+                res.status(200).send("comment created");
+            }).catch(error => {
+                console.log(error)
+                res.status(400).send("not created");
+            })
+        } else {
+            res.status(401).send("invalid user")
+        }
 
+    });
 }
 
 function postPoll(req, res) {

@@ -20,16 +20,20 @@ router.get('/latest', (req, res, next) => {
 });
 
 router.get('/stories', (req, res, next) => {
-    session.run("match (n:STORY) return n")
+    session.run("match (b:STORY), p= (b)<-[:COMMENT_ON *0..]-(c) return  b, relationships(p)")
         .then(result => {
-            var stories = result.records.map(item => {
-                console.log(item._fields[0].properties);
-                console.log("result");
-                return item._fields[0].properties
-            })
+            console.log(result)
+            var stories = [];
+            var comments = [];
+            result.records.forEach(item => {
+                if (item._fields[0].labels[0] === "STORY") {
+                    stories.push()
+                } else {
 
-            res.send(stories);
-        })
+                }
+            });
+            res.send(JSON.stringify(result));
+        });
 
 });
 
