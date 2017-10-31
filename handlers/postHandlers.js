@@ -76,11 +76,13 @@ function postComment(req, res) {
                 {//(p)<-[:PARENT]-
                     parent: item.post_parent,
                     s: {
+                        author: item.username,
                         post_title: item.post_title,
                         post_type: item.post_type,
                         post_text: item.post_text,
                         post_url: item.post_url,
                         post_parent: item.post_parent,
+                        created_at: date_Now.toISOString(),
                         hanesst_id: item.hanesst_id
                     }
                 }).then(answer => {
