@@ -53,5 +53,8 @@ router.post('/', (req, res, next) => {
     }
 });
 
+router.get('/item/single/:id', (req, res, next) => {
+    handler.getItem(req, res);
+});
 
 module.exports = router;
