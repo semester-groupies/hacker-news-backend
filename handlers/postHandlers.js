@@ -83,7 +83,9 @@ function postComment(req, res) {
                         post_url: item.post_url,
                         post_parent: item.post_parent,
                         created_at: date_Now.toISOString(),
-                        hanesst_id: item.hanesst_id
+                        hanesst_id: item.hanesst_id,
+                        vote_up: 0,
+                        vote_down: 0
                     }
                 }).then(answer => {
                 console.log(answer);
