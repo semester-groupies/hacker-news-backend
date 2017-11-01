@@ -28,7 +28,10 @@ lineReader.eachLine('usersAll.csv', function(line, last){
 });
 
 function insert(user){
-  var resultPromise = session.run('CREATE (n:USER {userin} )',{ userin: user });
+  var resultPromise = session.run("MERGE(id:UniqueId{name:'USER'}) ON CREATE SET id.count = 1" +
+      ' ON MATCH SET id.count = id.count + 1 ' +
+      ' WITH id.count AS uid ' +
+      'CREATE (n:USER {userin} )',{ userin: user });
   return resultPromise.then(function (result) {
     session.close();
   }).catch(function (error) {
