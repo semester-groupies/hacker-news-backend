@@ -26,9 +26,27 @@ router.get('/stories', (req, res, next) => {
             var stories = result.records.map(item => {
                 return item._fields
             })
-            res.send(JSON.stringify(stories,null,2));
+            res.send(JSON.stringify(stories, null, 2));
         });
 
 });
+
+router.get('/item/:id', (req, res, next) => {
+    var commentId = parseInt(req.params.id);
+    session.run('MATCH p = (s)<-[:COMMENT_ON *0..]-()  where  ID(s)= {id} with collect(p) as items CALL apoc.convert.toTree(items) yield value return value',
+        { id: neo4j.int(commentId) })
+        .then(function (record) {
+            console.log(record);
+            if (record.records[0]) {
+                res.status(200).send(record.records[0]._fields[0]);
+            } else {
+                res.status(404).send({ msg: 'No Item found with that ID' });
+            }
+        }).catch(function (error) {
+
+        console.log(error);
+    });
+});
+
 
 module.exports = router;

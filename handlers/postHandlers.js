@@ -17,7 +17,7 @@ function getUser(username, password) {
           'where n.username = {username} ' +
           '  return n', { username: userToCreate.username })
           .then(function (record) {
-              if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
+              if (bcrypt.compareSync(bcrypt.hashSync(password,salt), record.records[0]._fields[0].properties.password)) {
                 resolve(true);
               } else {
                 resolve(false);
@@ -28,10 +28,67 @@ function getUser(username, password) {
         });
     });
 }
+function getUserOur(username, password) {
+    return new Promise((resolve, reject) => {
+        var userToCreate = {
+            username: username,
+            password: bcrypt.hashSync(password, salt),
+        };
+        session.run('Match (n:USER)' +
+            'where n.username = {username} ' +
+            '  return n', { username: userToCreate.username })
+            .then(function (record) {
+                if (password === record.records[0]._fields[0].properties.password) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            }).catch(function (error) {
+            // console.log(error);
+            resolve(false);
+        });
+    });
+}
 
 function postStory(req, res) {
   var item = req.body;
-  getUser(item.username, item.pwd_hash).then(isUser => {
+  getUserOur(item.username, item.pwd_hash).then(isUser => {
+      console.log(isUser);
+      if (isUser) {
+        session.run(`Match (n:USER)
+                        where n.username = {name} 
+                        create (:STORY {s})<-[:POSTED]-(n)`,
+            {//(p)<-[:PARENT]-
+                name: item.username,
+                s: {
+                    author: item.username,
+                    post_title: item.post_title,
+                    post_type: item.post_type,
+                    post_text: item.post_text,
+                    post_url: item.post_url,
+                    post_parent: item.post_parent,
+                    hanesst_id: item.hanesst_id,
+                    created_at: date_Now.toISOString(),
+                    score: 0
+                  }
+              }).then(answer => {
+            console.log(answer);
+            res.status(200).send('post created');
+          }).catch(error => {
+            console.log(error);
+            res.status(400).send('not created');
+          });
+      } else {
+        res.status(401).send('invalid user');
+      }
+
+    });
+};
+
+
+function postStoryOur(req, res) {
+  var item = req.body;
+  getUserOur(item.username, item.pwd_hash).then(isUser => {
       console.log(isUser);
       if (isUser) {
         session.run(`Match (n:USER)
@@ -65,37 +122,37 @@ function postStory(req, res) {
 };
 
 function postComment(req, res) {
-  var item = req.body;
-  getUser(item.username, item.pwd_hash).then(isUser => {
-      console.log(isUser);
-      if (isUser) {
-        session.run(`Match (n)
+    var item = req.body;
+    getUser(item.username, item.pwd_hash).then(isUser => {
+        console.log(isUser);
+        if (isUser) {
+            session.run(`Match (n)
                         where n.hanesst_id = {parent} 
                         create (:COMMENT {s})-[:COMMENT_ON]->(n)`,
-            {//(p)<-[:PARENT]-
-                parent: item.post_parent,
-                s: {
-                    author: item.username,
-                    post_title: item.post_title,
-                    post_type: item.post_type,
-                    post_text: item.post_text,
-                    post_url: item.post_url,
-                    post_parent: item.post_parent,
-                    created_at: date_Now.toISOString(),
-                    hanesst_id: item.hanesst_id,
-                    vote_up: 0,
-                    vote_down: 0
-                  }
-              }).then(answer => {
-            console.log(answer);
-            res.status(200).send('comment created');
-          }).catch(error => {
-            console.log(error);
-            res.status(400).send('not created');
-          });
-      } else {
-        res.status(401).send('invalid user');
-      }
+                {//(p)<-[:PARENT]-
+                    parent: item.post_parent,
+                    s: {
+                        author: item.username,
+                        post_title: item.post_title,
+                        post_type: item.post_type,
+                        post_text: item.post_text,
+                        post_url: item.post_url,
+                        post_parent: item.post_parent,
+                        created_at: date_Now.toISOString(),
+                        hanesst_id: item.hanesst_id,
+                        vote_up: 0,
+                        vote_down: 0
+                    }
+                }).then(answer => {
+                console.log(answer);
+                res.status(200).send('comment created');
+            }).catch(error => {
+                console.log(error);
+                res.status(400).send('not created');
+            });
+        } else {
+            res.status(401).send('invalid user');
+        }
 
     });
 }
@@ -110,10 +167,52 @@ function postPollopt(req, res) {
 
 }
 
+
+
+function postCommentOur(req, res) {
+    var item = req.body;
+    console.log(item);
+    getUserOur(item.username, item.pwd_hash).then(isUser => {
+        console.log(isUser);
+        console.log("======");
+        if (isUser) {
+            session.run(`Match (n)
+                        where ID(n) = {parent} 
+                        create (:COMMENT {s})-[:COMMENT_ON]->(n)`,
+                {//(p)<-[:PARENT]-
+                    parent: neo4j.int(item.post_parent),
+                    s: {
+                        author: item.username,
+                        post_title: item.post_title,
+                        post_type: item.post_type,
+                        post_text: item.post_text,
+                        post_url: item.post_url,
+                        post_parent: item.post_parent,
+                        created_at: date_Now.toISOString(),
+                        vote_up: 0,
+                        vote_down: 0
+                    }
+                }).then(answer => {
+                console.log(answer);
+                res.status(200).send('comment created');
+            }).catch(error => {
+                console.log(error);
+                res.status(400).send('not created');
+            });
+        } else {
+            res.status(401).send('invalid user');
+        }
+
+    });
+}
+
+
 function getItem(req, res) {
   var commentId = parseInt(req.params.id);
-  session.run('MATCH (n:COMMENT) WHERE ID(n) = {id} return n', { id: commentId })
+  session.run('MATCH p = (s)<-[:COMMENT_ON]-()  where  ID(s)= {id} with collect(p) as items CALL apoc.convert.toTree(items) yield value return value',
+      { id: neo4j.int(commentId) })
       .then(function (record) {
+          console.log(record);
           if (record.records[0]) {
             res.status(200).send(record.records[0]);
           } else {
@@ -127,6 +226,8 @@ function getItem(req, res) {
 module.exports = {
     postStory: postStory,
     postComment: postComment,
+    postCommentOur:postCommentOur,
+    postStoryOur:postStoryOur,
     postPoll: postPoll,
     postPollopt: postPollopt,
     getItem: getItem
