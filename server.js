@@ -20,6 +20,7 @@ const users = require('./routes/users');
  */
 const app = express();
 app.use(cors());
+app.use(require('express-status-monitor')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
