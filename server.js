@@ -14,17 +14,18 @@ var cors = require('cors');
 const index = require('./routes/index');
 const story = require('./routes/post');
 const users = require('./routes/users');
+const status = require('./routes/status');
 
 /**
  * Create Express server.
  */
 const app = express();
 app.use(cors());
-app.use(require('express-status-monitor')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/', index);
 app.use('/user', users);
+app.use('/status', status);
 app.use('/post', story);
 /*
 app.get('/', (req, res) => {
