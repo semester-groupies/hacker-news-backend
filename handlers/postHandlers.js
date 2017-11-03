@@ -9,15 +9,11 @@ var date_Now = new Date();
 
 function getUser(username, password) {
   return new Promise((resolve, reject) => {
-      var userToCreate = {
-          username: username,
-          password: bcrypt.hashSync(password, salt),
-        };
       session.run('Match (n:USER)' +
           'where n.username = {username} ' +
-          '  return n', { username: userToCreate.username })
+          '  return n', { username: username })
           .then(function (record) {
-              if (bcrypt.compareSync(bcrypt.hashSync(password,salt), record.records[0]._fields[0].properties.password)) {
+              if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
                 resolve(true);
               } else {
                 resolve(false);
@@ -30,15 +26,11 @@ function getUser(username, password) {
 }
 function getUserOur(username, password) {
     return new Promise((resolve, reject) => {
-        var userToCreate = {
-            username: username,
-            password: bcrypt.hashSync(password, salt),
-        };
         session.run('Match (n:USER)' +
             'where n.username = {username} ' +
-            '  return n', { username: userToCreate.username })
+            '  return n', { username: username })
             .then(function (record) {
-                if (password === record.records[0]._fields[0].properties.password) {
+                if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
                     resolve(true);
                 } else {
                     resolve(false);
@@ -53,7 +45,6 @@ function getUserOur(username, password) {
 function postStory(req, res) {
   var item = req.body;
   getUserOur(item.username, item.pwd_hash).then(isUser => {
-      console.log(isUser);
       if (isUser) {
         session.run(`Match (n:USER)
                         where n.username = {name} 
@@ -72,7 +63,6 @@ function postStory(req, res) {
                     score: 0
                   }
               }).then(answer => {
-            console.log(answer);
             res.status(200).send('post created');
           }).catch(error => {
             console.log(error);
@@ -89,7 +79,6 @@ function postStory(req, res) {
 function postStoryOur(req, res) {
   var item = req.body;
   getUserOur(item.username, item.pwd_hash).then(isUser => {
-      console.log(isUser);
       if (isUser) {
         session.run(`Match (n:USER)
                         where n.username = {name} 
@@ -108,7 +97,6 @@ function postStoryOur(req, res) {
                     score: 0
                   }
               }).then(answer => {
-            console.log(answer);
             res.status(200).send('post created');
           }).catch(error => {
             console.log(error);
@@ -124,7 +112,6 @@ function postStoryOur(req, res) {
 function postComment(req, res) {
     var item = req.body;
     getUser(item.username, item.pwd_hash).then(isUser => {
-        console.log(isUser);
         if (isUser) {
             session.run(`Match (n)
                         where n.hanesst_id = {parent} 
@@ -144,7 +131,6 @@ function postComment(req, res) {
                         vote_down: 0
                     }
                 }).then(answer => {
-                console.log(answer);
                 res.status(200).send('comment created');
             }).catch(error => {
                 console.log(error);
@@ -173,8 +159,6 @@ function postCommentOur(req, res) {
     var item = req.body;
     console.log(item);
     getUserOur(item.username, item.pwd_hash).then(isUser => {
-        console.log(isUser);
-        console.log("======");
         if (isUser) {
             session.run(`Match (n)
                         where ID(n) = {parent} 
@@ -193,7 +177,6 @@ function postCommentOur(req, res) {
                         vote_down: 0
                     }
                 }).then(answer => {
-                console.log(answer);
                 res.status(200).send('comment created');
             }).catch(error => {
                 console.log(error);
@@ -212,7 +195,6 @@ function getItem(req, res) {
   session.run('MATCH p = (s)<-[:COMMENT_ON]-()  where  ID(s)= {id} with collect(p) as items CALL apoc.convert.toTree(items) yield value return value',
       { id: neo4j.int(commentId) })
       .then(function (record) {
-          console.log(record);
           if (record.records[0]) {
             res.status(200).send(record.records[0]);
           } else {
