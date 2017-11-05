@@ -51,7 +51,7 @@ router.post('/postItem', (req, res, next) => {
 
 
 router.post('/', (req, res, next) => {
-    var item = req.body;
+    var item = req.data;
     var errors = "";
     if (item) {
         console.log(item.hasOwnProperty('username'));
