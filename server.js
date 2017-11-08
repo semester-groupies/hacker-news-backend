@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 const express = require('express');
+const client = require('prom-client');
 const errorHandler = require('errorhandler');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
@@ -50,6 +51,29 @@ app.use(logger('dev'));
  * Error Handler.
  */
 app.use(errorHandler());
+
+/**
+ * Prometheus metrics
+*/
+const register = new client.Registry();
+const histogram = new client.Histogram({
+	name: 'backend_histogram',
+	help: 'metric_help',
+	labelNames: ['code']
+});
+
+setTimeout(() => {
+	histogram.labels('200').observe(Math.random());
+	histogram.labels('300').observe(Math.random());
+}, 10);
+
+app.get('/metrics', (req, res) => {
+	res.set('Content-Type', register.contentType);
+	res.end(register.metrics());
+});
+
+//Enable collection of default metrics
+client.collectDefaultMetrics({ register });
 
 /**
  * Start Express server.
