@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const neo4j = require("neo4j-driver").v1;
-var serverBolt = process.env.NEO4J_DEV || "bolt://45.32.234.181:7687";
+var serverBolt =  "bolt://45.32.234.181:7687";
 const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
 let session = driver.session();
 
@@ -18,21 +18,8 @@ router.get('/latest', (req, res, next) => {
         console.log(err)
     })
 });
-
-router.get('/stories', (req, res, next) => {
-    var skip;
-    if (req.query.page)
-        skip = req.query.page * 10;
-    else
-        skip = 0;
-    session.run("match (c:STORY)<-[r:COMMENT_ON *0..]-()\n" +
-        "with c , count(r) as comments\n" +
-        "with  c{.*, comments:comments , id : ID(c)} as commented\n" +
-        "return commented skip 0 limit 10 \n" +
-        "union all MATCH ( c:STORY) \n" +
-        "WHERE NOT (c)-[:COMMENT_ON]->()\n" +
-        "with  c{.*, comments:0 , id : ID(c)} as commented\n" +
-        "return commented  skip 0  limit 10", {skip: skip})
+router.get('/count', (req, res) => {
+    session.run("match (p:STORY) return count(p)")
         .then(result => {
             console.log(result.records);
             var stories = result.records.map(item => {
@@ -40,6 +27,31 @@ router.get('/stories', (req, res, next) => {
             })
             res.send(JSON.stringify(stories, null, 2));
         });
+});
+
+router.get('/stories', (req, res, next) => {
+    console.log(req.query.page);
+    var skipi;
+    if (req.query.page)
+        skipi = req.query.page * 10;
+    else
+        skipi = 0;
+    session.run("match (c:STORY)<-[r:COMMENT_ON *0..]-()\n" +
+        "with c , count(r) as comments\n" +
+        "with  c{.*, comments:comments , id : ID(c)} as commented\n" +
+        "return commented skip {skipi} limit 10 \n" +
+        "union all MATCH ( c:STORY) \n" +
+        "WHERE NOT (c)-[:COMMENT_ON]->()\n" +
+        "with  c{.*, comments:0 , id : ID(c)} as commented\n" +
+        "return commented  skip {skipi} limit 10", {skipi: skipi})
+        .then(result => {
+            var stories = result.records.map(item => {
+                return item._fields
+            });
+            res.send(JSON.stringify(stories, null, 2));
+        }).catch(err => {
+            console.log(err);
+    });
 
 });
 
