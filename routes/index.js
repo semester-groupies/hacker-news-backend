@@ -21,11 +21,9 @@ router.get('/latest', (req, res, next) => {
 router.get('/count', (req, res) => {
     session.run("match (p:STORY) return count(p)")
         .then(result => {
-            console.log(result.records);
-            var stories = result.records.map(item => {
-                return item._fields
-            })
-            res.send(JSON.stringify(stories, null, 2));
+            var count  = result.records[0]._fields[0].low
+            // console.log(count);
+            res.send(count+"");
         });
 });
 
