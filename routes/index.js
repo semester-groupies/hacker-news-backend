@@ -20,16 +20,19 @@ router.get('/latest', (req, res, next) => {
 });
 
 router.get('/stories', (req, res, next) => {
-
-
+    var skip;
+    if (req.query.page)
+        skip = req.query.page * 10;
+    else
+        skip = 0;
     session.run("match (c:STORY)<-[r:COMMENT_ON *0..]-()\n" +
         "with c , count(r) as comments\n" +
         "with  c{.*, comments:comments , id : ID(c)} as commented\n" +
-        "return commented skip 0 limit 20 \n" +
+        "return commented skip 0 limit 10 \n" +
         "union all MATCH ( c:STORY) \n" +
         "WHERE NOT (c)-[:COMMENT_ON]->()\n" +
         "with  c{.*, comments:0 , id : ID(c)} as commented\n" +
-        "return commented  skip 0  limit 20",{skip:skip})
+        "return commented  skip 0  limit 10", {skip: skip})
         .then(result => {
             console.log(result.records);
             var stories = result.records.map(item => {
@@ -43,13 +46,13 @@ router.get('/stories', (req, res, next) => {
 router.get('/item/:id', (req, res, next) => {
     var commentId = parseInt(req.params.id);
     session.run('MATCH p = (s)<-[:COMMENT_ON *0..]-()  where  ID(s)= {id} with collect(p) as items CALL apoc.convert.toTree(items) yield value return value',
-        { id: neo4j.int(commentId) })
+        {id: neo4j.int(commentId)})
         .then(function (record) {
             console.log(record);
             if (record.records[0]) {
                 res.status(200).send(record.records[0]._fields[0]);
             } else {
-                res.status(404).send({ msg: 'No Item found with that ID' });
+                res.status(404).send({msg: 'No Item found with that ID'});
             }
         }).catch(function (error) {
 
