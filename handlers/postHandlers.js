@@ -13,7 +13,7 @@ function getUser(username, password) {
           'where n.username = {username} ' +
           '  return n', { username: username })
           .then(function (record) {
-              if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
+              if (bcrypt.compareSync(bcrypt.hashSync(password,salt), record.records[0]._fields[0].properties.password)) {
                 resolve(true);
               } else {
                 resolve(false);
@@ -44,7 +44,7 @@ function getUserOur(username, password) {
 
 function postStory(req, res) {
   var item = req.body;
-  getUserOur(item.username, item.pwd_hash).then(isUser => {
+  getUser(item.username, item.pwd_hash).then(isUser => {
       if (isUser) {
         session.run(`Match (n:USER)
                         where n.username = {name} 

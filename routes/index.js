@@ -20,7 +20,16 @@ router.get('/latest', (req, res, next) => {
 });
 
 router.get('/stories', (req, res, next) => {
-    session.run("match (b:STORY), p= (b)<-[:COMMENT_ON *0..]-(c) with collect(p) as items CALL apoc.convert.toTree(items) yield value return value")
+
+
+    session.run("match (c:STORY)<-[r:COMMENT_ON *0..]-()\n" +
+        "with c , count(r) as comments\n" +
+        "with  c{.*, comments:comments , id : ID(c)} as commented\n" +
+        "return commented skip 0 limit 20 \n" +
+        "union all MATCH ( c:STORY) \n" +
+        "WHERE NOT (c)-[:COMMENT_ON]->()\n" +
+        "with  c{.*, comments:0 , id : ID(c)} as commented\n" +
+        "return commented  skip 0  limit 20",{skip:skip})
         .then(result => {
             console.log(result.records);
             var stories = result.records.map(item => {
