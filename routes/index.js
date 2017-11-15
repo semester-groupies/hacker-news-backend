@@ -22,6 +22,7 @@ router.get('/latest', (req, res, next) => {
     })
 });
 router.get('/count', (req, res) => {
+    let session = driver.session();
     session.run("match (p:STORY) return count(p)")
         .then(result => {
             var count  = result.records[0]._fields[0].low
