@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 const express = require('express');
+
+
 const client = require('prom-client');
 const errorHandler = require('errorhandler');
 const logger = require('morgan');
@@ -23,14 +25,14 @@ const status = require('./routes/status');
 const app = express();
 // app.use(cors());
 var addJsonHeaders = function (req, res, next) {
-    req.headers['content-type']= 'application/json';
+    req.headers['content-type'] = 'application/json';
     // res.setHeader('Content-Type', 'application/json');
     next();
 }
-app.use(cors());
+// app.use(cors());
 app.use(addJsonHeaders);
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/', index);
 app.use('/user', users);
@@ -48,7 +50,9 @@ app.set('host', process.env.NODE_ENV || 'localhost');
 //todo set digital ocean port in configuration
 app.set('port', 8090);
 app.use(logger('dev'));
-
+process.on('exit', function () {
+    console.log('About to exit.');
+});
 /**
  * Error Handler.
  */
@@ -56,34 +60,38 @@ app.use(errorHandler());
 
 /**
  * Prometheus metrics
-*/
+ */
 const register = new client.Registry();
-const histogram = new client.Histogram({
-	name: 'backend_histogram',
-	help: 'metric_help',
-	labelNames: ['code']
-});
+// const histogram = new client.Histogram({
+// 	name: 'backend_histogram',
+// 	help: 'metric_help',
+// 	labelNames: ['code']
+// });
 
-setTimeout(() => {
-	histogram.labels('200').observe(Math.random());
-	histogram.labels('300').observe(Math.random());
-}, 10);
+// setTimeout(() => {
+// 	histogram.labels('200').observe(Math.random());
+// 	histogram.labels('300').observe(Math.random());
+//
+// }, 10);
 
 app.get('/metrics', (req, res) => {
-	res.set('Content-Type', register.contentType);
-	res.end(register.metrics());
+    res.set('Content-Type', register.contentType);
 });
 
+// setInterval(()=>{
+// 	console.log(process.memoryUsage())
+// },10000);
+
 //Enable collection of default metrics
-client.collectDefaultMetrics({ register });
+client.collectDefaultMetrics({register});
 
 /**
  * Start Express server.
  */
 app.listen(app.get('port'), () => {
     console.log(
-    `Hacker-news api is running at http://localhost:${app.get('port')} with ${app.get('host')} configuration`
-);
+        `Hacker-news api is running at http://localhost:${app.get('port')} with ${app.get('host')} configuration`
+    );
 })
 ;
 

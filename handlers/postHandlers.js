@@ -7,6 +7,11 @@ let session = driver.session();
 var salt = require('./taste').salt;
 var date_Now = new Date();
 
+process.on('exit', function () {
+    driver.close();
+    console.log("closing gracefully")
+});
+
 function getUser(username, password) {
   return new Promise((resolve, reject) => {
       session.run('Match (n:USER)' +
