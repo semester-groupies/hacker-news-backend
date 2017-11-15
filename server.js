@@ -23,7 +23,7 @@ const status = require('./routes/status');
  * Create Express server.
  */
 const app = express();
-// app.use(cors());
+app.use(cors());
 var addJsonHeaders = function (req, res, next) {
     req.headers['content-type'] = 'application/json';
     // res.setHeader('Content-Type', 'application/json');
