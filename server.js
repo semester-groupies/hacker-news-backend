@@ -75,7 +75,8 @@ setTimeout(() => {
 }, 10);
 
 app.get('/metrics', (req, res) => {
-    res.set('Content-Type', register.contentType);
+	res.set('Content-Type', register.contentType);
+	res.end(register.metrics());
 });
 
 // setInterval(()=>{
