@@ -1,13 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const neo4j = require("neo4j-driver").v1;
-var serverBolt =  "bolt://45.32.234.181:7687";
+var serverBolt = "bolt://45.32.234.181:7687";
 const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
 
 
 process.on('exit', driver.close);
-    router.get('/', (req, res, next) => {
-    res.send(process.memoryUsage());
+router.get('/', (req, res, next) => {
+
+
+    var mem = process.memoryUsage();
+    var memory = {freeHeap: ((mem.heapUsed * 100) / mem.heapTotal).toFixed(2) + "%", objects: mem.external};
+    var resp = {
+        memoryUsage: mem, memory: memory
+    }
+    res.send(JSON.stringify(resp, null, 4));
+
 });
 
 router.get('/latest', (req, res, next) => {
@@ -25,15 +33,15 @@ router.get('/count', (req, res) => {
     let session = driver.session();
     session.run("match (p:STORY) return count(p)")
         .then(result => {
-            var count  = result.records[0]._fields[0].low
+            var count = result.records[0]._fields[0].low
             let session = driver.session();
             // console.log(count);
             session.close();
-            res.send(count+"");
+            res.send(count + "");
         });
 });
 
-router.get('/s',(req,res)=>{
+router.get('/s', (req, res) => {
 
 });
 router.get('/stories', (req, res, next) => {
@@ -59,7 +67,7 @@ router.get('/stories', (req, res, next) => {
             });
             res.send(JSON.stringify(stories, null, 2));
         }).catch(err => {
-            console.log(err);
+        console.log(err);
     });
 
 });

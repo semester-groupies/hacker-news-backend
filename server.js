@@ -62,17 +62,17 @@ app.use(errorHandler());
  * Prometheus metrics
  */
 const register = new client.Registry();
-// const histogram = new client.Histogram({
-// 	name: 'backend_histogram',
-// 	help: 'metric_help',
-// 	labelNames: ['code']
-// });
+const histogram = new client.Histogram({
+	name: 'backend_histogram',
+	help: 'metric_help',
+	labelNames: ['code']
+});
 
-// setTimeout(() => {
-// 	histogram.labels('200').observe(Math.random());
-// 	histogram.labels('300').observe(Math.random());
-//
-// }, 10);
+setTimeout(() => {
+	histogram.labels('200').observe(Math.random());
+	histogram.labels('300').observe(Math.random());
+
+}, 10);
 
 app.get('/metrics', (req, res) => {
     res.set('Content-Type', register.contentType);
