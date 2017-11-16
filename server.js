@@ -11,6 +11,11 @@ const errorHandler = require('errorhandler');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+var log4js = require('log4js');
+log4js.configure('log4js_configuration.json');
+var log = log4js.getLogger('tests');
+
+
 /**
  * Controllers (route handlers).
  */
@@ -33,6 +38,7 @@ var addJsonHeaders = function (req, res, next) {
 app.use(addJsonHeaders);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(log4js.connectLogger(log4js.getLogger("http"), { level: 'auto' }));
 
 app.use('/', index);
 app.use('/user', users);

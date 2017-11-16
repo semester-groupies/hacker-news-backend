@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const storyTypes = require("./../enums/postType");
 const handler = require("./../handlers/postHandlers");
+var log4js = require('log4js');
+log4js.configure('log4js_configuration.json');
+var log = log4js.getLogger('tests');
+
 router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
@@ -30,6 +34,7 @@ router.post('/postItem', (req, res, next) => {
             msg.status = 400;
             msg.message = "malformed body " + errors;
             res.send(msg);
+            log.error(msg.message);
         } else {
             if (item.post_type == storyTypes.story) {
                 handler.postStoryOur(req, res);
@@ -46,6 +51,7 @@ router.post('/postItem', (req, res, next) => {
         msg.status = 400;
         msg.message = "the request was empty!";
         res.send(msg);
+        log.error(msg.message);
     }
 });
 
