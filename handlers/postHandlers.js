@@ -18,7 +18,7 @@ function getUser(username, password) {
             'where n.username = {username} ' +
             '  return n', {username: username})
             .then(function (record) {
-                if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
+                if (record) {
                     resolve(true);
                 } else {
                     resolve(false);
