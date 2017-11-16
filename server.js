@@ -11,9 +11,7 @@ const errorHandler = require('errorhandler');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 var cors = require('cors');
-var log4js = require('log4js');
-log4js.configure('log4js_configuration.json');
-var log = log4js.getLogger('tests');
+
 
 
 /**

@@ -3,7 +3,26 @@ const router = express.Router();
 const storyTypes = require("./../enums/postType");
 const handler = require("./../handlers/postHandlers");
 var log4js = require('log4js');
-log4js.configure('log4js_configuration.json');
+log4js.configure({
+    "appenders": [
+        {
+            "category": "tests",
+            "type": "logLevelFilter",
+            "level": "WARN",
+            "appender": {
+                "type": "log4js-elasticsearch",
+                "url": "http://45.77.55.123:9200"
+            }
+        },
+        {
+            "category": "tests",
+            "type": "console"
+        }
+    ],
+    "levels": {
+        "tests": "DEBUG"
+    }
+});
 var log = log4js.getLogger('tests');
 
 router.get('/', (req, res, next) => {
