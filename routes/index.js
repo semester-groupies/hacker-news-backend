@@ -51,14 +51,10 @@ router.get('/stories', (req, res, next) => {
     else
         skipi = 0;
     let session = driver.session();
-    session.run("match (c:STORY)<-[r:COMMENT_ON *0..]-()\n" +
-        "with c , count(r) as comments\n" +
-        "with  c{.*, comments:comments , id : ID(c)} as commented\n" +
-        "return commented skip {skipi} limit 10 \n" +
-        "union all MATCH ( c:STORY) \n" +
-        "WHERE NOT (c)-[:COMMENT_ON]->()\n" +
-        "with  c{.*, comments:0 , id : ID(c)} as commented\n" +
-        "return commented  skip {skipi} limit 10", {skipi: skipi})
+    session.run("MATCH (n:STORY)<-[r:COMMENT_ON *..]- () " +
+        " with  n{.*, comments:((count(r)-1)) , id : ID(n)} as commented" +
+        "return (commented) order by commented.created_at" +
+        "skip {skipi} limit 20", {skipi: skipi})
         .then(result => {
             var stories = result.records.map(item => {
                 var results = item._fields
