@@ -18,12 +18,14 @@ function getUser(username, password) {
             'where n.username = {username} ' +
             '  return n', {username: username})
             .then(function (record) {
+                session.close()
                 if (record) {
                     resolve(true);
                 } else {
                     resolve(false);
                 }
             }).catch(function (error) {
+                session.close()
             // console.log(error);
             resolve(false);
         });
@@ -45,7 +47,7 @@ function getUserOur(username, password) {
                     resolve(false);
                 }
             }).catch(function (error) {
-            session.close();
+                session.close();
             resolve(false);
         });
     });
