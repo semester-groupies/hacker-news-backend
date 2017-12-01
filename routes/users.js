@@ -19,7 +19,7 @@ process.on('exit', driver.close);
  * @apiGroup User
  * @apiParam {String} username username of the User.
  * @apiParam {String} password password of the User.
- * @apiSuccess {String} JWT containing information about the user.
+ * @apiSuccess {String} JWT JWT containing information about the user.
  */
 router.post('/register', (req, res, next) => {
 
@@ -70,7 +70,7 @@ router.post('/register', (req, res, next) => {
  * @apiGroup User
  * @apiParam {String} username username of the User.
  * @apiParam {String} password password of the User.
- * @apiSuccess {String} returns the username and password of the user.
+ * @apiSuccess {String} JWT JWT containing information about the user.
  */
 router.post('/login', (req, res, next) => {
     const user = req.body;
