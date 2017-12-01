@@ -12,14 +12,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>of the User.</p>"
+            "description": "<p>username of the User.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>of the User.</p>"
+            "description": "<p>password of the User.</p>"
           }
         ]
       }
@@ -45,7 +45,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/user/register",
-    "title": "Register and log in a new User",
+    "title": "Register and Log in a new User",
     "group": "User",
     "parameter": {
       "fields": {
@@ -55,14 +55,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>of the User.</p>"
+            "description": "<p>username of the User.</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>of the User.</p>"
+            "description": "<p>password of the User.</p>"
           }
         ]
       }

@@ -17,8 +17,8 @@ process.on('exit', driver.close);
 /**
  * @api {post} /user/register  Register and Log in a new User
  * @apiGroup User
- * @apiParam {String} username of the User.
- * @apiParam {String} password of the User.
+ * @apiParam {String} username username of the User.
+ * @apiParam {String} password password of the User.
  * @apiSuccess {String} JWT containing information about the user.
  */
 router.post('/register', (req, res, next) => {
@@ -68,8 +68,8 @@ router.post('/register', (req, res, next) => {
 /**
  * @api {post} /user/login  Log in a User
  * @apiGroup User
- * @apiParam {String} username of the User.
- * @apiParam {String} password of the User.
+ * @apiParam {String} username username of the User.
+ * @apiParam {String} password password of the User.
  * @apiSuccess {String} returns the username and password of the user.
  */
 router.post('/login', (req, res, next) => {
