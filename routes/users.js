@@ -48,7 +48,7 @@ router.post('/register', (req, res, next) => {
                 'CREATE (n:USER {userin} )', {userin: userToCreate})
                 .then(function (result) {
                     session.close();
-                    res.status(200).send(jwt.sign(user, handler.secret));
+                    res.status(200).send({ username: username, password: password });
                 }).catch(function (error) {
                 session.close();
                 console.log(error);
@@ -101,7 +101,7 @@ router.post('/login', (req, res, next) => {
                         const password = record.records[0]._fields[0].properties.password;
                         if (bcrypt.compareSync(user.password, password)) {
                             session.close();
-                            res.status(200).send(jwt.sign(user, handler.secret));
+                            res.status(200).send({ username: username, password: password });
                         } else {
                             session.close();
                             res.status(401).send({msg: 'Wrong Username or Password'});
