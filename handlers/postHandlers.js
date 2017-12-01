@@ -5,6 +5,8 @@ var serverBolt = process.env.NEO4J_DEV || 'bolt://45.32.234.181:7687';
 const driver = neo4j.driver(serverBolt, neo4j.auth.basic('neo4j', 'hackernes'));
 var salt = require('./taste').salt;
 var date_Now = new Date();
+const loggerError = require('.././log4js.js').fileError;
+const loggerInfo = require('.././log4js.js').fileInfo;
 
 process.on('exit', function () {
     driver.close();
@@ -43,8 +45,10 @@ function getUserOur(username, password) {
                 session.close();
                 if (bcrypt.compareSync(password, record.records[0]._fields[0].properties.password)) {
                     resolve(true);
+                    loggerInfo.info("Successfully authenticated user");
                 } else {
                     resolve(false);
+                    loggerInfo.info("Failed to authenticate user");
                 }
             }).catch(function (error) {
                 session.close();
@@ -82,6 +86,7 @@ function postStory(req, res) {
                 console.log(error);
                 session.close()
                 res.status(400).send('not created');
+                loggerError.error("Failed to post story");
             });
         } else {
             res.status(401).send('invalid user');

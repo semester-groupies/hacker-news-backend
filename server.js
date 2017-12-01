@@ -67,6 +67,11 @@ const histogram = new client.Histogram({
 	help: 'metric_help',
 	labelNames: ['code']
 });
+/**
+ * Elk stack
+ */
+var log4jsLogger = require('./log4js.js').fileAll;
+var log4jsLoggerInfo = require('./log4js.js').fileInfo;
 
 setTimeout(() => {
 	histogram.labels('200').observe(Math.random());

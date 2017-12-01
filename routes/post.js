@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const storyTypes = require("./../enums/postType");
 const handler = require("./../handlers/postHandlers");
+const loggerError = require('.././log4js.js').fileError;
+const loggerInfo = require('.././log4js.js').fileInfo;
+
 router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
@@ -29,6 +32,7 @@ router.post('/postItem', (req, res, next) => {
             var msg = new Error();
             msg.status = 400;
             msg.message = "malformed body " + errors;
+            loggerError.error(msg.message);
             res.send(msg);
         } else {
             if (item.post_type == storyTypes.story) {
@@ -40,12 +44,14 @@ router.post('/postItem', (req, res, next) => {
             } else if (item.post_type == storyTypes.pollopt) {
                 handler.postPollopt(req, res);
             }
+            loggerInfo.info("Successfully posted an item");
         }
     } else {
         var msg = new Error();
         msg.status = 400;
         msg.message = "the request was empty!";
         res.send(msg);
+        loggerError.error(msg.message);
     }
 });
 
@@ -76,6 +82,7 @@ router.post('/', (req, res, next) => {
             var msg = new Error();
             msg.status = 400;
             msg.message = "malformed body " + errors;
+            loggerError.error(msg.message);
             res.send(msg);
         } else {
             if (item.post_type == storyTypes.story) {
@@ -87,11 +94,13 @@ router.post('/', (req, res, next) => {
             } else if (item.post_type == storyTypes.pollopt) {
                 handler.postPollopt(req, res);
             }
+            loggerInfo.info("Successfully posted an item");
         }
     } else {
         var msg = new Error();
         msg.status = 400;
         msg.message = "the request was empty!";
+        loggerError.error(msg.message);
         res.send(msg);
     }
 });
