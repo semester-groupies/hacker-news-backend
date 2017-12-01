@@ -6,6 +6,11 @@ const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
 
 
 process.on('exit', driver.close);
+
+/**
+ * @api {get} / Returns memory usage information for the server
+ * @apiGroup Index
+ */
 router.get('/', (req, res, next) => {
 
 
@@ -18,6 +23,11 @@ router.get('/', (req, res, next) => {
 
 });
 
+/**
+ * @api {get} /latest Returns the latest hanesst_id
+ * @apiGroup Index
+ * @apiSuccess {Number} hanesst_id Hanesst_id
+  */
 router.get('/latest', (req, res, next) => {
     let session = driver.session();
     session.run("match (n) 	WITH  max(n.hanesst_id) AS maximum return maximum").then(max => {
@@ -29,6 +39,12 @@ router.get('/latest', (req, res, next) => {
         console.log(err)
     })
 });
+
+/**
+ * @api {get} /count Returns the total number of Stories
+ * @apiGroup Index
+ * @apiSuccess {Number} count total count of stories
+ */
 router.get('/count', (req, res) => {
     let session = driver.session();
     session.run("match (p:STORY) return count(p)")
@@ -44,6 +60,12 @@ router.get('/count', (req, res) => {
 router.get('/s', (req, res) => {
 
 });
+
+/**
+ * @api {get} /stories Returns the stories for the feed, 20 at a time
+ * @apiGroup Index
+ * @apiSuccess {JSON} results JSON containing 20 stories, with comments
+ */
 router.get('/stories', (req, res, next) => {
     var skipi;
     if (req.query.page)
@@ -69,6 +91,12 @@ router.get('/stories', (req, res, next) => {
 
 });
 
+/**
+ * @api {get} /item/:id Returns a story or comment by id
+ * @apiGroup Index
+ * @apiParam {Number} id The id of the story/comment to return.
+ * @apiSuccess {JSON} results JSON containing the story/comment
+ */
 router.get('/item/:id', (req, res, next) => {
     var commentId = parseInt(req.params.id);
     let session = driver.session();
