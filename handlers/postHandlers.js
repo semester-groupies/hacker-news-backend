@@ -179,6 +179,7 @@ function postPollopt(req, res) {
 
 function postCommentOur(req, res) {
     var item = req.body;
+    let session = driver.session();
     console.log(item);
     getUserOur(item.username, item.pwd_hash).then(isUser => {
         if (isUser) {
@@ -199,8 +200,10 @@ function postCommentOur(req, res) {
                         vote_down: 0
                     }
                 }).then(answer => {
+                session.close();
                 res.status(200).send('comment created');
             }).catch(error => {
+                session.close();
                 console.log(error);
                 res.status(400).send('not created');
             });
@@ -214,12 +217,15 @@ function postCommentOur(req, res) {
 
 function getItem(req, res) {
     var commentId = parseInt(req.params.id);
+    let session = driver.session();
     session.run('MATCH p = (s)<-[:COMMENT_ON]-()  where  ID(s)= {id} with collect(p) as items CALL apoc.convert.toTree(items) yield value return value',
         {id: neo4j.int(commentId)})
         .then(function (record) {
             if (record.records[0]) {
+                session.close();
                 res.status(200).send(record.records[0]);
             } else {
+                session.close();
                 res.status(404).send({msg: 'No Item found with that ID'});
             }
         }).catch(function (error) {

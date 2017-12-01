@@ -43,6 +43,7 @@ router.post('/register', (req, res, next) => {
                     session.close();
                     res.status(200).send(jwt.sign(user, handler.secret));
                 }).catch(function (error) {
+                session.close();
                 console.log(error);
                 res.send(error);
             });

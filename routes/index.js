@@ -63,7 +63,8 @@ router.get('/stories', (req, res, next) => {
             });
             res.send(JSON.stringify(stories, null, 2));
         }).catch(err => {
-        console.log(err);
+    session.close();
+    console.log(err);
     });
 
 });
