@@ -9,6 +9,19 @@ router.get('/', (req, res, next) => {
     res.json({name: 'John', surname: 'Williams'});
 });
 
+/**
+ * @api {post} /post/postItem
+ * @apiGroup Post
+ * @apiParam {String} username username of the user
+ * @apiParam {String} post_type post_type of the story
+ * @apiParam {String} post_title post_title of the story
+ * @apiParam {String} post_url post_url of the story
+ * @apiParam {String} post_parent post_parent of the story
+ * @apiParam {String} hanesst_id hanesst_id of the story
+ * @apiParam {String} post_text post_text of the story
+ * @apiDescription Used for posting an item
+ */
+
 router.post('/postItem', (req, res, next) => {
     var item = req.body;
     var errors = "";
@@ -55,6 +68,18 @@ router.post('/postItem', (req, res, next) => {
     }
 });
 
+/**
+ * @api {post} /post
+ * @apiGroup Post
+ * @apiParam {String} username username of the user
+ * @apiParam {String} post_type post_type of the story
+ * @apiParam {String} post_title post_title of the story
+ * @apiParam {String} post_url post_url of the story
+ * @apiParam {String} post_parent post_parent of the story
+ * @apiParam {String} hanesst_id hanesst_id of the story
+ * @apiParam {String} post_text post_text of the story
+ * @apiDescription Used for posting an item
+ */
 
 router.post('/', (req, res, next) => {
     var item = req.body;

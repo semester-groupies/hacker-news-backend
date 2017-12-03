@@ -15,7 +15,7 @@ let salt = handler.salt;
 process.on('exit', driver.close);
 
 /**
- * @api {post} /user/register  Register and Log in a new User
+ * @api {post} /users/register  Register and Log in a new User
  * @apiGroup User
  * @apiParam {String} username username of the User.
  * @apiParam {String} password password of the User.
@@ -66,7 +66,7 @@ router.post('/register', (req, res, next) => {
 });
 
 /**
- * @api {post} /user/login  Log in a User
+ * @api {post} /users/login  Log in a User
  * @apiGroup User
  * @apiParam {String} username username of the User.
  * @apiParam {String} password password of the User.

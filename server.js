@@ -42,7 +42,7 @@ app.use('/post', story);
 app.get('/', (req, res) => {
   res.send('Hello World from a Docker image and Richy!');
 });*/
-
+app.use(express.static('apidoc'));
 /**
  * Express configuration.
  */

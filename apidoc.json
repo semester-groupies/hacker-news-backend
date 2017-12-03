@@ -1,7 +1,7 @@
 {
-  "name": "Task API documentation",
+  "name": "Hacker News Backend documentation",
   "version": "1.0.0",
-  "description": "API task list manager",
+  "description": "Route list manager",
   "template": {
     "forceLanguage": "en"
   }
