@@ -88,6 +88,7 @@ router.get('/stories', (req, res, next) => {
                                 , {id: item.identity.low})
                                 .then(rec => {
                                     item.properties.comments = rec.records[0]._fieldLookup.comments;
+                                    item.properties.id = item.identity.low;
                                     resolve(item.properties)
                                 }).catch(err => console.log(err))
                         })
