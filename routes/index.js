@@ -83,11 +83,12 @@ router.get('/stories', (req, res, next) => {
                 result.records.map(item => {
                     var results = item._fields
                     smList.push(new Promise((resolve, reject) => {
-                        results.map(item => {
-                            session.run("start n=NODE({id}) match (n:STORY)-[r:COMMENT_ON *.. ]-() return count(r) as comments"
-                                , {id: item.identity.low})
+                        results.map(item => {//start n=NODE(409824) match (n:STORY)-[r:COMMENT_ON *.. ]-() return count(r)-1 as comments
+                            session.run("match (n:STORY) where ID(n) = {id} match (n:STORY)-[r:COMMENT_ON ]-(:COMMENT) return count(r) as comments"
+                                , {id: neo4j.int(item.identity.low) })
                                 .then(rec => {
-                                    item.properties.comments = rec.records[0]._fieldLookup.comments;
+                                    console.log(req);
+                                    item.properties.comments = rec.records[0]._fields[0].low;
                                     item.properties.id = item.identity.low;
                                     resolve(item.properties)
                                 }).catch(err => console.log(err))
