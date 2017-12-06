@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const neo4j = require("neo4j-driver").v1;
+var Promise = require("bluebird");
 var serverBolt = "bolt://45.32.234.181:7687";
 const driver = neo4j.driver(serverBolt, neo4j.auth.basic("neo4j", "hackernes"));
 
+var async = require('async');
 
 process.on('exit', driver.close);
 
@@ -27,7 +29,7 @@ router.get('/', (req, res, next) => {
  * @api {get} /latest Returns the latest hanesst_id
  * @apiGroup Index
  * @apiSuccess {Number} hanesst_id Hanesst_id
-  */
+ */
 router.get('/latest', (req, res, next) => {
     let session = driver.session();
     session.run("match (n) 	WITH  max(n.hanesst_id) AS maximum return maximum").then(max => {
@@ -73,23 +75,53 @@ router.get('/stories', (req, res, next) => {
     else
         skipi = 0;
     let session = driver.session();
-    session.run("MATCH (n:STORY)<-[r:COMMENT_ON *..]- () " +
-        " with  n{.*, comments:((count(r)-1)) , id : ID(n)} as commented" +
-        "return (commented) order by commented.created_at" +
-        "skip {skipi} limit 20", {skipi: skipi})
+    session.run("MATCH (n:STORY)return n   skip {skipi} limit 20", {skipi: skipi})
         .then(result => {
-            var stories = result.records.map(item => {
-                var results = item._fields
-                session.close();
-                return results
-            });
-            res.send(JSON.stringify(stories, null, 2));
+            var stories = []
+            var smList = []
+            stories.push(new Promise((resolve, reject) => {
+                result.records.map(item => {
+                    var results = item._fields
+                    smList.push(new Promise((resolve, reject) => {
+                        results.map(item => {
+                            session.run("start n=NODE({id}) match (n:STORY)-[r:COMMENT_ON *.. ]-() return count(r) as comments"
+                                , {id: item.identity.low})
+                                .then(rec => {
+                                    item.properties.comments = rec.records[0]._fieldLookup.comments;
+                                    resolve(item.properties)
+                                }).catch(err => console.log(err))
+                        })
+                    }))
+                });
+                Promise.all(smList).then(fullfil => {
+                    resolve(fullfil)
+                })
+            }));
+
+            Promise.all(stories).then(fullfil => {
+                res.send(JSON.stringify(fullfil[0], null, 2))
+            })
+
         }).catch(err => {
-    session.close();
-    console.log(err);
+        session.close();
+        console.log(err);
     });
 
-});
+})
+;
+
+/*
+old query : MATCH (n:STORY)<-[r:COMMENT_ON *..]- ()  with  n{.*, comments:((count(r)-1)) , id : ID(n)} as commented return (commented) order by commented.created_at skip {skipi} limit 20
+ */
+
+/*
+ *  get the number of comments in story
+ *
+ *   start n=NODE(409564) match (n:STORY)-[r:COMMENT_ON *.. ]-() return count(r)
+ *
+ *
+ */
+
 
 /**
  * @api {get} /item/:id Returns a story or comment by id
