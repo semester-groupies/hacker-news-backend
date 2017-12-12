@@ -90,28 +90,28 @@ describe('API /routes/users', () => {
     });
   });
   describe('POST /user/login', () => {
-    it('should create a user and log him in', done => {
-      var userToCreate = {
-        username: 'test1',
-        password: 'test1'
-      };
-      request
-          .post('/user/register')
-          .send(userToCreate)
-          .expect(200)
-          .then((res)=>{
-              let result = JSON.parse(res.text);
-              userToCreate.username = result.username;
-            request
-              .post('/user/login')
-              .send(userToCreate)
-              .expect(200)
-              .end((err, res) => {
-                res.status.should.equal(200);
-                done(err);
-              });
-          });
-    });
+    // it('should create a user and log him in', done => {
+    //   var userToCreate = {
+    //     username: 'test1',
+    //     password: 'test1'
+    //   };
+    //   request
+    //       .post('/user/register')
+    //       .send(userToCreate)
+    //       .expect(200)
+    //       .then((res)=>{
+    //           let result = JSON.parse(res.text);
+    //           userToCreate.username = result.username;
+    //         request
+    //           .post('/user/login')
+    //           .send(userToCreate)
+    //           .expect(200)
+    //           .end((err, res) => {
+    //             res.status.should.equal(200);
+    //             done(err);
+    //           });
+    //       });
+    // });
     it('should return 400 password is missing ', done => {
       var userToCreate = {
         username: 'test',
